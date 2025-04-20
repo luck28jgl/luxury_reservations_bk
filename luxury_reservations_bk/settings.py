@@ -26,8 +26,11 @@ SECRET_KEY = 'django-insecure-k*ic3s-&$3$@y2bs6p&rwz_7*$gjf)0!#l7+n3peuoxe^l%$qb
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '127.0.0.1').split(',')
-
+ALLOWED_HOSTS = [
+    'luxury-reservations-bk.onrender.com',  # Dominio de tu aplicación en Render
+    '127.0.0.1',  # Para pruebas locales
+    'localhost',  # Para pruebas locales
+]
 
 # Application definition
 
