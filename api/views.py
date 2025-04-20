@@ -47,6 +47,10 @@ from .models import *
 from django.views.decorators.csrf import csrf_exempt
 from django.views import View
 from rest_framework.decorators import api_view
+from django.core.mail import EmailMessage
+from django.template.loader import render_to_string
+
+print(settings.TEMPLATES[0]['DIRS']) 
 
 class NotificationViewSet(viewsets.ModelViewSet):
 	queryset = Notification.objects.all().order_by('-id')
@@ -94,8 +98,32 @@ class reservacionesViewSet(viewsets.ModelViewSet):
 			tip_vista=str(data['tip_vista']),
 		)
 		enf.save()
-		# makeLogs(request,'actualización de usuarios', 'ha registrado un nuevo Staff')
-		return Response({'status':True, 'message':'Reservación registrada correctamente.'})
+		# Render the email template with the reservation data
+		email_content = render_to_string(
+			'email-notificaciones.html',  # Path to your template
+			{
+				'mensaje': f"Se ha creado una nueva reservación con los siguientes datos:\n"
+						f"Email: {data['email']}\n"
+						f"Usuario: {data['uduario']}\n"
+						f"Hotel: {data['hotel']}\n"
+						f"Plan: {data['plan']}\n"
+						f"Tipo de Habitación: {data['tip_hab']}\n"
+						f"Tipo de Vista: {data['tip_vista']}"
+			}
+		)
+
+		# Send the email
+		email = EmailMessage(
+			subject="Nueva Reservación Creada",
+			body=email_content,
+			from_email=settings.DEFAULT_FROM_EMAIL,  # Usar el valor configurado en settings.py
+			# from_email="noreply@tu-dominio.com",  # Replace with your sender email
+			to=["andrea2030ibarra@gmail.com"],  # Replace with the fixed recipient email
+		)
+		email.content_subtype = "html"  # Specify that the email content is HTML
+		email.send()
+
+		return Response({'status': True, 'message': 'Reservación registrada correctamente.'})
 
 
 class cuentasViewSet(viewsets.ModelViewSet):
