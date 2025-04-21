@@ -49,9 +49,49 @@ from django.views import View
 from rest_framework.decorators import api_view
 from django.core.mail import EmailMessage
 from django.template.loader import render_to_string
+from django.contrib.auth import logout, login
+from django.utils import timezone
 
-print(settings.TEMPLATES[0]['DIRS']) 
+# print(settings.TEMPLATES[0]['DIRS']) 
+class CustomTokenCreateView(APIView):
+	permission_classes = [AllowAny]
 
+	def post(self, request):
+		username = request.data.get('username')
+		password = request.data.get('password')
+		user = authenticate(username=username, password=password)
+
+		if user is not None:
+			usru = usuario.objects.get(user=user)
+			# now = timezone.now()
+			if not usru.tipo in [0]:
+				return Response({'error': 'Invalid credentials'}, status=status.HTTP_400_BAD_REQUEST)
+			token, created = Token.objects.get_or_create(user=user)
+			login(request, user)
+			# makeLogs(request,'Inicio de Sesión', 'ha iniciado sesión')
+			return Response({'auth_token': token.key, 'status': True})
+		else:
+			return Response({'error': 'Invalid credentials'}, status=status.HTTP_400_BAD_REQUEST)
+
+class LogoutView(APIView):
+
+	def post(self, request):
+		try:
+			logout(request)
+			return Response(status=status.HTTP_204_NO_CONTENT)
+		except Token.DoesNotExist:
+			return Response({'error': 'Token not found'}, status=status.HTTP_400_BAD_REQUEST)
+
+class ApigetUserType(APIView):
+	authentication_classes = [SessionAuthentication]
+	permission_classes = [AllowAny]
+
+	def post(self, request):
+		data=request.data
+		print(data)
+		user = User.objects.get(username=data['username'])
+		return Response({'status':True, 'tipo': user.usuario.tipo, 'id': user.usuario.id})
+		
 class NotificationViewSet(viewsets.ModelViewSet):
 	queryset = Notification.objects.all().order_by('-id')
 	serializer_class = NotificationSerializer
@@ -129,4 +169,25 @@ class reservacionesViewSet(viewsets.ModelViewSet):
 class cuentasViewSet(viewsets.ModelViewSet):
 	queryset = usuario.objects.all().exclude(tipo=0)
 	serializer_class = AcoutSerializer
+	authentication_classes = [SessionAuthentication]
+
+	def create(self, request):
+		data = request.data
+		enf = User.objects.create(
+			first_name=data['first_name'],
+			last_name=data['first_name'],
+			email=data['email'],
+			username=data['email'],
+			is_staff=False,
+			is_superuser=True
+		)
+		enf.set_password(data['password'])
+		enf.save()
+		tipo_usuario = data.get('tipo_usuario')
+
+		us = usuario.objects.create(user=enf, tipo=tipo_usuario)
+		us.save()
+		# makeLogs(request,'actualización de usuarios', 'ha registrado un nuevo Staff')
+		return Response({'status':True, 'message':'Staff registrado correctamente.'})
+	
 
