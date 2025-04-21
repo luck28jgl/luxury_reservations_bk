@@ -114,6 +114,16 @@ class reservacionesViewSet(viewsets.ModelViewSet):
 	serializer_class = ReservacionesSerializer
 	authentication_classes = [SessionAuthentication]
 
+	@action(detail=True, methods=['delete'], url_path='delete-reservation')
+	def delete_reservation(self, request, pk=None):
+		try:
+			# Obtener la reservación por ID
+			reservation = self.get_object()
+			reservation.delete()
+			return Response({'status': True, 'message': 'Reservación eliminada correctamente.'}, status=status.HTTP_200_OK)
+		except reservaciones.DoesNotExist:
+			return Response({'status': False, 'message': 'Reservación no encontrada.'}, status=status.HTTP_404_NOT_FOUND)
+
 	def list(self, request):
 		data = request.GET
 		tmp = self.get_queryset()

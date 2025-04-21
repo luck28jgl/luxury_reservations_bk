@@ -19,6 +19,7 @@ from django.urls import path, include
 from django.http import HttpResponse
 from django.http import HttpResponseRedirect
 from api.views import CustomTokenCreateView
+from api.views import *
 
 def redirect_to_api(request):
     return HttpResponseRedirect('/api/')
@@ -29,5 +30,5 @@ urlpatterns = [
     path('', redirect_to_api), 
     path('api/', include('api.urls')),
     path('api/token/login/', CustomTokenCreateView.as_view(), name='custom-token-create'),
-
+    path('api/token/logout/', LogoutView.as_view()),
 ]
