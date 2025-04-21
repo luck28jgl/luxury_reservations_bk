@@ -75,7 +75,9 @@ AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',  # Backend predeterminado
 ]
 CORS_ALLOWED_ORIGINS = [
-    "https://luxury-reservations-git-main-star-max.vercel.app",
+    "https://luxury-reservations.vercel.app", 
+    "https://luxury-reservations-git-main-star-max.vercel.app", 
+    "https://luxury-reservations-22yjfd2l3-star-max.vercel.app",
     "http://localhost:5173",  # URL de tu frontend
 ]
 # CORS_ALLOW_ALL_ORIGINS = True
