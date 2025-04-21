@@ -51,6 +51,9 @@ from django.core.mail import EmailMessage
 from django.template.loader import render_to_string
 from django.contrib.auth import logout, login
 from django.utils import timezone
+from django.contrib.auth import authenticate
+user = authenticate(username='tes66@gmail.com', password='123456')
+print(user)  # Debería devolver el objeto del usuario si las credenciales son correctas
 
 # print(settings.TEMPLATES[0]['DIRS']) 
 class CustomTokenCreateView(APIView):
@@ -59,16 +62,17 @@ class CustomTokenCreateView(APIView):
 	def post(self, request):
 		username = request.data.get('username')
 		password = request.data.get('password')
+		print(f"Username: {username}, Password: {password}")  # Depuración
 		user = authenticate(username=username, password=password)
+		print(f"Authenticated user: {user}")  # Depuración
 
 		if user is not None:
 			usru = usuario.objects.get(user=user)
-			# now = timezone.now()
+			print(f"User type: {usru.tipo}")  # Depuración
 			if not usru.tipo in [0]:
 				return Response({'error': 'Invalid credentials'}, status=status.HTTP_400_BAD_REQUEST)
 			token, created = Token.objects.get_or_create(user=user)
 			login(request, user)
-			# makeLogs(request,'Inicio de Sesión', 'ha iniciado sesión')
 			return Response({'auth_token': token.key, 'status': True})
 		else:
 			return Response({'error': 'Invalid credentials'}, status=status.HTTP_400_BAD_REQUEST)
