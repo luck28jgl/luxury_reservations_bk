@@ -75,7 +75,7 @@ MIDDLEWARE = [
 CORS_ALLOWED_ORIGINS = [
     "https://luxury-reservations.vercel.app", 
     "https://luxury-reservations-git-main-star-max.vercel.app", 
-    "https://luxury-reservations-84f469e51-star-max.vercel.app",
+    "https://luxury-reservations-22yjfd2l3-star-max.vercel.app",
     "http://localhost:5173",  # URL de tu frontend
 ]
 # CORS_ALLOW_ALL_ORIGINS = True
