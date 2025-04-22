@@ -172,6 +172,7 @@ class reservacionesViewSet(viewsets.ModelViewSet):
 			body=email_content,
 			from_email=settings.DEFAULT_FROM_EMAIL,  # Usar el valor configurado en settings.py
 			# from_email="noreply@tu-dominio.com",  # Replace with your sender email
+			# to=["connyi.moreno@gmail.com","fredyescobar623@gmail.com"],  # Replace with the fixed recipient email
 			to=["andrea2030ibarra@gmail.com"],  # Replace with the fixed recipient email
 		)
 		email.content_subtype = "html"  # Specify that the email content is HTML

@@ -17,6 +17,11 @@ class reservaciones(models.Model):
     plan = models.TextField(default='') # superficie minima del terreno
     tip_hab = models.TextField(default='') # superficie minima del terreno
     tip_vista = models.TextField(default='') # superficie minima del terreno
+    cuentas_pesonas = models.TextField(default='') # superficie minima del terreno
+    usuario_on = models.BooleanField(default=True) # superficie minima del terreno
+    fecha_de_creacion = models.DateTimeField(auto_now=True)
+    desde = models.DateTimeField(auto_now=True)
+    hasta = models.DateTimeField(auto_now=True)
 
 class usuario(models.Model):
 
