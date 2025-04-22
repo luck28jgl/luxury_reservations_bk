@@ -120,8 +120,12 @@ WSGI_APPLICATION = 'luxury_reservations_bk.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'rdsejemplo',
+        'USER': "postgres",
+        'PASSWORD': 'KFmDKUVCgX',
+        'HOST': 'rds-ejemplo.cdw4cq0g8nab.us-east-2.rds.amazonaws.com',
+        'PORT': '5432',
     }
 }
 

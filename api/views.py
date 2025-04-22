@@ -21,7 +21,7 @@ from django.template.loader import get_template
 from django.shortcuts import get_object_or_404
 from django.db.models.functions import Concat
 from rest_framework.decorators import action
-from django.contrib.auth import authenticate
+# from django.contrib.auth import authenticate
 from rest_framework.response import Response
 # from .utils.AppToken import get_access_token
 # from .utils.generacionDocumentos import generarDocumento
@@ -63,15 +63,15 @@ class CustomTokenCreateView(APIView):
 		username = request.data.get('username')
 		password = request.data.get('password')
 		print(f"Username: {username}, Password: {password}")  # Depuración
-		user = authenticate(username=username, password=password)
-		print(f"Authenticated user: {user}")  # Depuración
+		usr = authenticate(username=username, password=password)
+		print(f"Authenticated user: {usr}")  # Depuración
 
-		if user is not None:
-			usru = usuario.objects.get(user=user)
+		if usr is not None:
+			usru = usuario.objects.get(user=usr)
 			print(f"User type: {usru.tipo}")  # Depuración
 			# if not usru.tipo in [0]:
 			# 	return Response({'error': 'Invalid credentials'}, status=status.HTTP_400_BAD_REQUEST)
-			token, created = Token.objects.get_or_create(user=user)
+			token, created = Token.objects.get_or_create(user=usr)
 			login(request, user)
 			return Response({'auth_token': token.key, 'status': True})
 		else:
