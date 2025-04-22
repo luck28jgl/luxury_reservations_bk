@@ -71,9 +71,9 @@ MIDDLEWARE = [
     
 ]
 
-# AUTHENTICATION_BACKENDS = [
-#     'django.contrib.auth.backends.ModelBackend',  # Backend predeterminado
-# ]
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',  # Backend predeterminado
+]
 CORS_ALLOWED_ORIGINS = [
     "https://luxury-reservations-bk.onrender.com",
     "http://localhost:5173",  # URL de tu frontend
