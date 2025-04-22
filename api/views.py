@@ -52,6 +52,8 @@ from django.template.loader import render_to_string
 from django.contrib.auth import logout, login
 from django.utils import timezone
 from django.contrib.auth import authenticate
+from datetime import datetime  # Importar el módulo datetime
+
 user = authenticate(username='tes66@gmail.com', password='123456')
 print(user)  # Debería devolver el objeto del usuario si las credenciales son correctas
 
@@ -147,6 +149,11 @@ class reservacionesViewSet(viewsets.ModelViewSet):
 			email=data['email'],
 			uduario=data['uduario'],
 			hotel=str(data['hotel']),
+			cuentas_pesonas=str(data['cuentas_pesonas']),
+			usuario_on=str(data['usuario_on']),
+			fecha_de_creacion=datetime.now().strftime('%d/%m/%Y'),
+			desde=str(data['desde']),
+			hasta=str(data['hasta']),
 			plan=str(data['plan']),
 			tip_hab=str(data['tip_hab']),
 			tip_vista=str(data['tip_vista']),
@@ -156,13 +163,16 @@ class reservacionesViewSet(viewsets.ModelViewSet):
 		email_content = render_to_string(
 			'email-notificaciones.html',  # Path to your template
 			{
-				'mensaje': f"Se ha creado una nueva reservación con los siguientes datos:\n"
-						f"Email: {data['email']}\n"
-						f"Usuario: {data['uduario']}\n"
-						f"Hotel: {data['hotel']}\n"
-						f"Plan: {data['plan']}\n"
-						f"Tipo de Habitación: {data['tip_hab']}\n"
-						f"Tipo de Vista: {data['tip_vista']}"
+				'email': data['email'],
+				'uduario': data['uduario'],
+				'hotel': data['hotel'],
+				'plan': data['plan'],
+				'tip_hab': data['tip_hab'],
+				'tip_vista': data['tip_vista'],
+				'desde': data['desde'],
+				'hasta': data['hasta'],
+				'cuentas_pesonas': data['cuentas_pesonas'],
+				'fecha_de_creacion': datetime.now().strftime('%d/%m/%Y'),
 			}
 		)
 
@@ -173,7 +183,7 @@ class reservacionesViewSet(viewsets.ModelViewSet):
 			from_email=settings.DEFAULT_FROM_EMAIL,  # Usar el valor configurado en settings.py
 			# from_email="noreply@tu-dominio.com",  # Replace with your sender email
 			# to=["connyi.moreno@gmail.com","fredyescobar623@gmail.com"],  # Replace with the fixed recipient email
-			to=["andrea2030ibarra@gmail.com"],  # Replace with the fixed recipient email
+			to=["andrea2030ibarra@gmail.com","testingitado@gmail.com"],  # Replace with the fixed recipient email
 		)
 		email.content_subtype = "html"  # Specify that the email content is HTML
 		email.send()

@@ -136,6 +136,8 @@
         }
 
     </style>
+    <title>Nueva Reservación</title>
+
 </head>
 
 <body style="background-color: #ffffff; margin: 0 !important; padding: 0 !important;">
@@ -146,7 +148,7 @@
                     <tr>
                         <td bgcolor="#f7f7f7" align="center" valign="top"
                             style="padding: 0px; margin-top: 40px; margin-bottom: 40px;">
-                            <img src="../assets/img/luxereserv.png"
+                            <img src="{{ STATIC_URL }}assets/img/luxereserv.png"
                             style="display: block; width: 250px;margin-top: 40px; margin-bottom: 40px;"
                             border="0">
                         </td>
@@ -154,10 +156,18 @@
                     <tr>
                         <td align="center" valign="top"
                             style="background-color: #024a71; padding: 20px; border-radius: 4px 4px 0px 0px; color: #ffffff; font-size: 25px; font-weight: 400; letter-spacing: 2px; line-height: 30px; font-family:&apos;Lato&apos;, Helvetica, Arial, sans-serif;">
-                            <h1 style="margin-top: 40px; margin-bottom: 40px; font-family:&apos;Lato&apos;, Helvetica, Arial, sans-serif; font-size: 20px; font-weight: 300; text-align: justify; color: #ffffff;">{{mensaje}}
-                                {% if pdf %}
-                                <a href="{{ pdf }}" target="_blank" rel="noopener noreferrer">Abre el siguiente enlace</a>
-                                {% endif %}
+                            <h1 style="margin-top: 40px; margin-bottom: 40px; font-family:&apos;Lato&apos;, Helvetica, Arial, sans-serif; font-size: 20px; font-weight: 300; text-align: justify; color: #ffffff;">
+                                <h2>Detalles de la Reservación</h2>
+                                <p><strong>Email:</strong> {{ email }}</p>
+                                <p><strong>Nombre:</strong> {{ uduario }}</p>
+                                <p><strong>Hotel:</strong> {{ hotel }}</p>
+                                <p><strong>Plan:</strong> {{ plan }}</p>
+                                <p><strong>Tipo de Habitación:</strong> {{ tip_hab }}</p>
+                                <p><strong>Tipo de Vista:</strong> {{ tip_vista }}</p>
+                                <p><strong>Desde:</strong> {{ desde }}</p>
+                                <p><strong>Hasta:</strong> {{ hasta }}</p>
+                                <p><strong>Personas:</strong> {{ cuentas_pesonas }}</p>
+                                <p><strong>Fecha de Creación:</strong> {{ fecha_de_creacion }}</p>
                             </h1>
                         </td>
                     </tr>
