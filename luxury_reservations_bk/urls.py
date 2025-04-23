@@ -17,6 +17,8 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from django.http import HttpResponse
+from django.conf.urls.static import static
+
 from django.http import HttpResponseRedirect
 from api.views import CustomTokenCreateView
 from api.views import *
@@ -32,3 +34,6 @@ urlpatterns = [
     path('api/token/login/', CustomTokenCreateView.as_view(), name='custom-token-create'),
     path('api/token/logout/', LogoutView.as_view()),
 ]
+# Agregar esta línea para servir archivos de medios en desarrollo
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

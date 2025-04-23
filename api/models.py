@@ -18,6 +18,7 @@ class hoteles(models.Model):
 class reservaciones(models.Model):
     email = models.TextField(default='') # Habitantes por hectárea
     uduario = models.TextField(default='') # Cuartos por hectárea
+    usuario_relation = models.ForeignKey('usuario', on_delete=models.CASCADE, related_name='reservaciones', null=True, blank=True)
     hotel = models.TextField(default='') # Viviendas por hectareas
     plan = models.TextField(default='') # superficie minima del terreno
     tip_hab = models.TextField(default='') # superficie minima del terreno
@@ -37,5 +38,5 @@ class usuario(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     tipo = models.IntegerField(choices=Status.choices, default=1)
     emails_admin = models.ForeignKey(Notification, on_delete=models.CASCADE, null=True)
-    reservacion = models.ForeignKey(reservaciones, on_delete=models.CASCADE, null=True)
+    # reservacion = models.ForeignKey(reservaciones, on_delete=models.CASCADE, null=True)
 

@@ -11,6 +11,11 @@ class ReservacionesSerializer(serializers.ModelSerializer):
         model = reservaciones
         fields = '__all__'
 
+class HotelesSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = hoteles
+        fields = '__all__'
+
 class AcoutSerializer(serializers.ModelSerializer):
     class Meta:
         model = usuario

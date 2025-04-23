@@ -6,6 +6,7 @@ from rest_framework import routers
 router = routers.DefaultRouter()
 # router.register(r'notifications', NotificationView)
 router.register(r'reservaciones', reservacionesViewSet, basename='reservaciones')
+router.register(r'hoteles', hotelesViewSet, basename='hoteles')
 router.register(r'notifications', NotificationViewSet)
 router.register(r'usuarios', cuentasViewSet)
 

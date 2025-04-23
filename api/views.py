@@ -53,6 +53,10 @@ from django.contrib.auth import logout, login
 from django.utils import timezone
 from django.contrib.auth import authenticate
 from datetime import datetime  # Importar el módulo datetime
+import os
+from django.conf import settings
+from django.core.files.storage import default_storage
+from django.core.files.base import ContentFile
 
 user = authenticate(username='tes66@gmail.com', password='123456')
 print(user)  # Debería devolver el objeto del usuario si las credenciales son correctas
@@ -120,15 +124,86 @@ class reservacionesViewSet(viewsets.ModelViewSet):
 	serializer_class = ReservacionesSerializer
 	authentication_classes = [SessionAuthentication]
 
-	@action(detail=True, methods=['delete'], url_path='delete-reservation')
-	def delete_reservation(self, request, pk=None):
+	@action(detail=False, methods=['post'], url_path='create-for-user')
+	def create_for_user(self, request):
+		"""
+		Crea una reservación y la asocia a un cliente específico.
+		"""
+		data = request.data
+		usuario_id = data.get('usuario_id')  # ID del cliente al que se ligará la reservación
+
+		# Validar que el cliente exista
 		try:
-			# Obtener la reservación por ID
-			reservation = self.get_object()
-			reservation.delete()
-			return Response({'status': True, 'message': 'Reservación eliminada correctamente.'}, status=status.HTTP_200_OK)
-		except reservaciones.DoesNotExist:
-			return Response({'status': False, 'message': 'Reservación no encontrada.'}, status=status.HTTP_404_NOT_FOUND)
+			cliente = usuario.objects.get(id=usuario_id)
+		except usuario.DoesNotExist:
+			return Response({'status': False, 'message': 'Cliente no encontrado.'}, status=status.HTTP_404_NOT_FOUND)
+
+		# Crear la reservación
+		reservacion = reservaciones.objects.create(
+			email=data['email'],
+			uduario=data['uduario'],  # Asociar la reservación al cliente
+			usuario_relation=cliente,  # Asociar la reservación al cliente
+			hotel=data['hotel'],
+			plan=data['plan'],
+			tip_hab=data['tip_hab'],
+			tip_vista=data['tip_vista'],
+			cuentas_pesonas=data['cuentas_pesonas'],
+			usuario_on=True,
+			fecha_de_creacion=datetime.now().strftime('%d/%m/%Y'),
+			desde=data['desde'],
+			hasta=data['hasta'],
+		)
+		reservacion.save()
+		# enf.save()
+		# Render the email template with the reservation data
+		email_content = render_to_string(
+			'email-notificaciones-public.html',  # Path to your template
+			{
+				'email': data['email'],
+				'uduario': data['uduario'],
+				'usuario_con_cuenta_iniciada': cliente.user.first_name,
+				'hotel': data['hotel'],
+				'plan': data['plan'],
+				'tip_hab': data['tip_hab'],
+				'tip_vista': data['tip_vista'],
+				'desde': data['desde'],
+				'hasta': data['hasta'],
+				'cuentas_pesonas': data['cuentas_pesonas'],
+				'fecha_de_creacion': datetime.now().strftime('%d/%m/%Y'),
+			}
+		)
+
+		# Send the email
+		email = EmailMessage(
+			subject="Nueva Reservación Creada",
+			body=email_content,
+			from_email=settings.DEFAULT_FROM_EMAIL,  # Usar el valor configurado en settings.py
+			# from_email="noreply@tu-dominio.com",  # Replace with your sender email
+			# to=["connyi.moreno@gmail.com","fredyescobar623@gmail.com"],  # Replace with the fixed recipient email
+			to=["andrea2030ibarra@gmail.com","testingitado@gmail.com"],  # Replace with the fixed recipient email
+		)
+		email.content_subtype = "html"  # Specify that the email content is HTML
+		email.send()
+		return Response({'status': True, 'message': 'Reservación registrada correctamente.'})
+
+	@action(detail=False, methods=['get'], url_path='user-reservations')
+	def user_reservations(self, request):
+		"""
+		Lista todas las reservaciones asociadas a un cliente específico.
+		"""
+		usuario_id = request.query_params.get('usuario_id')  # Obtener el ID del cliente desde los parámetros de consulta
+
+		# Validar que el cliente exista
+		try:
+			cliente = usuario.objects.get(id=usuario_id)
+		except usuario.DoesNotExist:
+			return Response({'status': False, 'message': 'Cliente no encontrado.'}, status=status.HTTP_404_NOT_FOUND)
+
+		# Obtener las reservaciones asociadas al cliente
+		reservations = cliente.reservaciones.all()  # Usar el related_name definido en el modelo
+		serializer = self.get_serializer(reservations, many=True)
+
+		return Response({'status': True, 'reservations': serializer.data})
 
 	def list(self, request):
 		data = request.GET
@@ -189,6 +264,64 @@ class reservacionesViewSet(viewsets.ModelViewSet):
 		email.send()
 
 		return Response({'status': True, 'message': 'Reservación registrada correctamente.'})
+
+class hotelesViewSet(viewsets.ModelViewSet):
+	queryset = hoteles.objects.all()
+	serializer_class = HotelesSerializer
+	authentication_classes = [SessionAuthentication]
+
+	@action(detail=True, methods=['delete'], url_path='delete-reservation')
+	def delete_reservation(self, request, pk=None):
+		try:
+			# Obtener la reservación por ID
+			reservation = self.get_object()
+			reservation.delete()
+			return Response({'status': True, 'message': 'Reservación eliminada correctamente.'}, status=status.HTTP_200_OK)
+		except reservaciones.DoesNotExist:
+			return Response({'status': False, 'message': 'Reservación no encontrada.'}, status=status.HTTP_404_NOT_FOUND)
+
+	def list(self, request):
+		data = request.GET
+		tmp = self.get_queryset()
+		if data.get('filt'):
+			tmp = tmp.filter(mensaje__icontains=data['filt'])
+		queryset = self.filter_queryset(tmp)
+		page = self.paginate_queryset(queryset)
+		if page is not None:
+			serializer = self.get_serializer(page, many=True)
+			return self.get_paginated_response(serializer.data)
+		serializer = self.get_serializer(queryset, many=True)
+		return Response(serializer.data)
+
+	def create(self, request):
+		data = request.data
+		archivo = request.FILES.get('archivo')  # Obtener el archivo enviado
+
+		if archivo:
+			# Crear la carpeta media/hoteles si no existe
+			media_path = os.path.join(settings.MEDIA_ROOT, 'hoteles')
+			if not os.path.exists(media_path):
+				os.makedirs(media_path)
+
+			# Guardar el archivo en la carpeta media/hoteles
+			file_path = os.path.join('hoteles', archivo.name)
+			full_path = os.path.join(settings.MEDIA_ROOT, file_path)
+			default_storage.save(full_path, ContentFile(archivo.read()))
+
+			# Obtener la URL completa del archivo
+			img_url = f"{settings.MEDIA_URL}{file_path}".replace('\\', '/')
+
+			# Crear el objeto del modelo hoteles
+			enf = hoteles.objects.create(
+				Nombre=data['nombre'],
+				price=data['price'],
+				img=img_url,  # Guardar la URL en el campo img
+			)
+			enf.save()
+
+			return Response({'status': True, 'message': 'Hotel registrado correctamente.', 'img_url': img_url})
+		else:
+			return Response({'status': False, 'message': 'No se proporcionó un archivo.'}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class cuentasViewSet(viewsets.ModelViewSet):
