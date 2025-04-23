@@ -10,6 +10,11 @@ class Notification(models.Model):
 
 # Create your models here.
 
+class hoteles(models.Model):
+    Nombre = models.TextField(default='') #
+    price = models.TextField(default='') #
+    img = models.TextField(default='') #
+
 class reservaciones(models.Model):
     email = models.TextField(default='') # Habitantes por hectárea
     uduario = models.TextField(default='') # Cuartos por hectárea
