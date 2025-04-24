@@ -23,9 +23,9 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'  # Cambia esto si usas otro proveedor
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'luckibarra15@gmail.com'  # Reemplaza con tu correo
-EMAIL_HOST_PASSWORD = 'xclf haln qijh qveb'  # Reemplaza con tu contraseña o token de aplicación
-DEFAULT_FROM_EMAIL = 'luckibarra15@gmail.com'  # Opcional, para establecer un remitente predeterminado
+EMAIL_HOST_USER = 'reserveluxe@gmail.com'  # Reemplaza con tu correo
+EMAIL_HOST_PASSWORD = 'wmir kiig kigh gyul'  # Reemplaza con tu contraseña o token de aplicación
+DEFAULT_FROM_EMAIL = 'reserveluxe@gmail.com'  # Opcional, para establecer un remitente predeterminado
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
