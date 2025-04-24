@@ -100,7 +100,7 @@ class ApigetUserType(APIView):
 		data=request.data
 		print(data)
 		user = User.objects.get(username=data['username'])
-		return Response({'status':True, 'tipo': user.usuario.tipo, 'id': user.usuario.id})
+		return Response({'status':True, 'tipo': user.usuario.tipo, 'id': user.usuario.id, 'nombre': user.first_name})
 		
 class NotificationViewSet(viewsets.ModelViewSet):
 	queryset = Notification.objects.all().order_by('-id')
@@ -137,7 +137,7 @@ class reservacionesViewSet(viewsets.ModelViewSet):
 			cliente = usuario.objects.get(id=usuario_id)
 		except usuario.DoesNotExist:
 			return Response({'status': False, 'message': 'Cliente no encontrado.'}, status=status.HTTP_404_NOT_FOUND)
-
+	
 		# Crear la reservación
 		reservacion = reservaciones.objects.create(
 			email=data['email'],

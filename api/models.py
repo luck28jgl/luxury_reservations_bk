@@ -26,8 +26,8 @@ class reservaciones(models.Model):
     cuentas_pesonas = models.TextField(default='') # superficie minima del terreno
     usuario_on = models.BooleanField(default=True) # superficie minima del terreno
     fecha_de_creacion = models.DateTimeField(auto_now=True)
-    desde = models.DateTimeField(auto_now=True)
-    hasta = models.DateTimeField(auto_now=True)
+    desde = models.TextField(default='')  # Cambiado a TextField
+    hasta = models.TextField(default='')  # Cambiado a TextField
 
 class usuario(models.Model):
 
