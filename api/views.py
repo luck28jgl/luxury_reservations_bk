@@ -75,8 +75,8 @@ class CustomTokenCreateView(APIView):
 		if usr is not None:
 			usru = usuario.objects.get(user=usr)
 			print(f"User type: {usru.tipo}")  # Depuración
-			# if not usru.tipo in [0]:
-			# 	return Response({'error': 'Invalid credentials'}, status=status.HTTP_400_BAD_REQUEST)
+			if not usru.tipo in [0, 1]:
+				return Response({'error': 'Invalid credentials'}, status=status.HTTP_400_BAD_REQUEST)
 			token, created = Token.objects.get_or_create(user=usr)
 			login(request, user)
 			return Response({'auth_token': token.key, 'status': True})
