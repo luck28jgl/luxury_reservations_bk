@@ -120,9 +120,19 @@ class NotificationViewSet(viewsets.ModelViewSet):
 		return Response(serializer.data)
     
 class reservacionesViewSet(viewsets.ModelViewSet):
-	queryset = reservaciones.objects.all()
+	queryset = reservaciones.objects.all().order_by('-id')
 	serializer_class = ReservacionesSerializer
 	authentication_classes = [SessionAuthentication]
+
+	@action(detail=True, methods=['delete'], url_path='delete-reservation')
+	def delete_reservation(self, request, pk=None):
+		try:
+			# Obtener la reservación por ID
+			reservation = self.get_object()
+			reservation.delete()
+			return Response({'status': True, 'message': 'Reservación eliminada correctamente.'}, status=status.HTTP_200_OK)
+		except reservaciones.DoesNotExist:
+			return Response({'status': False, 'message': 'Reservación no encontrada.'}, status=status.HTTP_404_NOT_FOUND)
 
 	@action(detail=False, methods=['post'], url_path='create-for-user')
 	def create_for_user(self, request):
@@ -142,6 +152,7 @@ class reservacionesViewSet(viewsets.ModelViewSet):
 		reservacion = reservaciones.objects.create(
 			email=data['email'],
 			uduario=data['uduario'],  # Asociar la reservación al cliente
+			price=data['price'],
 			usuario_relation=cliente,  # Asociar la reservación al cliente
 			hotel=data['hotel'],
 			plan=data['plan'],
@@ -161,6 +172,7 @@ class reservacionesViewSet(viewsets.ModelViewSet):
 			{
 				'email': data['email'],
 				'uduario': data['uduario'],
+				'price': data['price'],
 				'usuario_con_cuenta_iniciada': cliente.user.first_name,
 				'hotel': data['hotel'],
 				'plan': data['plan'],
@@ -200,7 +212,7 @@ class reservacionesViewSet(viewsets.ModelViewSet):
 			return Response({'status': False, 'message': 'Cliente no encontrado.'}, status=status.HTTP_404_NOT_FOUND)
 
 		# Obtener las reservaciones asociadas al cliente
-		reservations = cliente.reservaciones.all()  # Usar el related_name definido en el modelo
+		reservations = cliente.reservaciones.all().order_by('-id')  # Usar el related_name definido en el modelo y ordenar por ID
 		serializer = self.get_serializer(reservations, many=True)
 
 		return Response({'status': True, 'reservations': serializer.data})
@@ -223,6 +235,7 @@ class reservacionesViewSet(viewsets.ModelViewSet):
 		enf = reservaciones.objects.create(
 			email=data['email'],
 			uduario=data['uduario'],
+			price=data['price'],
 			hotel=str(data['hotel']),
 			cuentas_pesonas=str(data['cuentas_pesonas']),
 			usuario_on=str(data['usuario_on']),
@@ -241,6 +254,7 @@ class reservacionesViewSet(viewsets.ModelViewSet):
 				'email': data['email'],
 				'uduario': data['uduario'],
 				'hotel': data['hotel'],
+				'price': data['price'],
 				'plan': data['plan'],
 				'tip_hab': data['tip_hab'],
 				'tip_vista': data['tip_vista'],

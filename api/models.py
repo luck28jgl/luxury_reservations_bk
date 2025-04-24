@@ -28,6 +28,7 @@ class reservaciones(models.Model):
     fecha_de_creacion = models.DateTimeField(auto_now=True)
     desde = models.TextField(default='')  # Cambiado a TextField
     hasta = models.TextField(default='')  # Cambiado a TextField
+    price = models.TextField(default='')  # Cambiado a TextField
 
 class usuario(models.Model):
 
