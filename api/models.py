@@ -25,6 +25,7 @@ class reservaciones(models.Model):
     tip_vista = models.TextField(default='') # superficie minima del terreno
     cuentas_pesonas = models.TextField(default='') # superficie minima del terreno
     usuario_on = models.BooleanField(default=True) # superficie minima del terreno
+    pagado = models.BooleanField(default=False) # superficie minima del terreno
     fecha_de_creacion = models.DateTimeField(auto_now=True)
     desde = models.TextField(default='')  # Cambiado a TextField
     hasta = models.TextField(default='')  # Cambiado a TextField

@@ -201,6 +201,7 @@ class reservacionesViewSet(viewsets.ModelViewSet):
 			'email-clientes.html',  # Path to your client-specific template
 			{
 				'uduario': data['uduario'],
+				'email': data['email'],
 				'hotel': data['hotel'],
 				'pdf_url': f"{settings.MEDIA_URL}ficha-eeuu.pdf",  # URL to the fixed PDF file
 			}
@@ -292,11 +293,33 @@ class reservacionesViewSet(viewsets.ModelViewSet):
 			body=email_content,
 			from_email=settings.DEFAULT_FROM_EMAIL,  # Usar el valor configurado en settings.py
 			# from_email="noreply@tu-dominio.com",  # Replace with your sender email
-			to=["connyi.moreno@gmail.com","fredyescobar623@gmail.com"],  # Replace with the fixed recipient email
-			# to=["andrea2030ibarra@gmail.com","testingitado@gmail.com"],# Replace with the fixed recipient email
+			# to=["connyi.moreno@gmail.com","fredyescobar623@gmail.com"],  # Replace with the fixed recipient email
+			to=["Luckibarra15@gmail.com"],# Replace with the fixed recipient email
 		)
 		email.content_subtype = "html"  # Specify that the email content is HTML
 		email.send()
+		
+		# Render the third email template with the hotel and download button
+		third_email_content = render_to_string(
+			'email-clientes.html',  # Path to your client-specific template
+			{
+				'uduario': data['uduario'],
+				'email': data['email'],
+				'hotel': data['hotel'],
+				'pdf_url': f"{settings.MEDIA_URL}ficha-eeuu.pdf",  # URL to the fixed PDF file
+			}
+		)
+
+		# Send the third email
+		third_email = EmailMessage(
+			subject="Ficha de pago de su Reservación",
+			body=third_email_content,
+			from_email=settings.DEFAULT_FROM_EMAIL,  # Usar el valor configurado en settings.py
+			to=["Luckibarra15@gmail.com"],  # Send to the client's email
+			# to=[data['email']],  # Send to the client's email
+		)
+		third_email.content_subtype = "html"  # Specify that the email content is HTML
+		third_email.send()
 
 		return Response({'status': True, 'message': 'Reservación registrada correctamente.'})
 
