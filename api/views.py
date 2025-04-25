@@ -159,7 +159,8 @@ class reservacionesViewSet(viewsets.ModelViewSet):
 			tip_hab=data['tip_hab'],
 			tip_vista=data['tip_vista'],
 			cuentas_pesonas=data['cuentas_pesonas'],
-			usuario_on=True,
+			usuario_on=data['usuario_on'],
+			pagado=False,## quiero que este campo sea false siempre
 			fecha_de_creacion=datetime.now().strftime('%d/%m/%Y'),
 			desde=data['desde'],
 			hasta=data['hasta'],
@@ -261,6 +262,7 @@ class reservacionesViewSet(viewsets.ModelViewSet):
 			hotel=str(data['hotel']),
 			cuentas_pesonas=str(data['cuentas_pesonas']),
 			usuario_on=str(data['usuario_on']),
+			pagado=False,
 			fecha_de_creacion=datetime.now().strftime('%d/%m/%Y'),
 			desde=str(data['desde']),
 			hasta=str(data['hasta']),
