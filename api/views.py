@@ -57,6 +57,7 @@ import os
 from django.conf import settings
 from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
+from rest_framework.parsers import MultiPartParser, FormParser
 
 user = authenticate(username='tes66@gmail.com', password='123456')
 print(user)  # Debería devolver el objeto del usuario si las credenciales son correctas
@@ -123,6 +124,39 @@ class reservacionesViewSet(viewsets.ModelViewSet):
 	queryset = reservaciones.objects.all().order_by('-id')
 	serializer_class = ReservacionesSerializer
 	authentication_classes = [SessionAuthentication]
+	parser_classes = [MultiPartParser, FormParser]
+
+	@action(detail=False, methods=['post'], url_path='enviar-comprovante')
+	def enviar_comprovante(self, request):
+		reservacion_id = request.data.get('id')
+		archivo = request.FILES.get('archivo')
+
+		if not reservacion_id or not archivo:
+			return Response({'error': 'ID y archivo son requeridos.'}, status=400)
+
+		try:
+			reservacion = reservaciones.objects.get(id=reservacion_id)
+		except reservaciones.DoesNotExist:
+			return Response({'error': 'Reservación no encontrada.'}, status=404)
+
+		# Guardar el archivo en la carpeta media/comprobantes
+		comprobantes_path = os.path.join(settings.MEDIA_ROOT, 'comprobantes')
+		os.makedirs(comprobantes_path, exist_ok=True)
+		file_path = os.path.join(comprobantes_path, archivo.name)
+
+		with default_storage.open(file_path, 'wb+') as destination:
+			for chunk in archivo.chunks():
+				destination.write(chunk)
+
+		# Guardar la URL del archivo en el modelo
+		reservacion.img_enviada = f'media/comprobantes/{archivo.name}'
+		reservacion.clent_envie_img = True  # Cambiar a True si el cliente envió el comprobante
+		reservacion.save()
+
+		# Generar la URL completa
+		file_url = request.build_absolute_uri(f'/media/comprobantes/{archivo.name}')
+
+		return Response({'message': 'Archivo subido exitosamente.', 'file_url': file_url})
 
 	@action(detail=True, methods=['delete'], url_path='delete-reservation')
 	def delete_reservation(self, request, pk=None):
