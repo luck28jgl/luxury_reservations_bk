@@ -238,7 +238,7 @@ class reservacionesViewSet(viewsets.ModelViewSet):
 				'uduario': data['uduario'],
 				'email': data['email'],
 				'hotel': data['hotel'],
-				'pdf_url': f"{settings.MEDIA_URL}ficha-eeuu.pdf",  # URL to the fixed PDF file
+				'pdf_url': f"{settings.MEDIA_URL}Ficha_de_pago_con_inicio_de_sesion.pdf",  # URL to the fixed PDF file
 			}
 		)
 
@@ -357,7 +357,7 @@ class reservacionesViewSet(viewsets.ModelViewSet):
 				'uduario': data['uduario'],
 				'email': data['email'],
 				'hotel': data['hotel'],
-				'pdf_url': f"{settings.MEDIA_URL}ficha-eeuu.pdf",  # URL to the fixed PDF file
+				'pdf_url': f"{settings.MEDIA_URL}Ficha_de_pago_fuera_de_luxe.pdf",  # URL to the fixed PDF file
 			}
 		)
 
