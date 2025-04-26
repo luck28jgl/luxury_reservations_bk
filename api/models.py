@@ -30,7 +30,7 @@ class reservaciones(models.Model):
     desde = models.TextField(default='')  # Cambiado a TextField
     hasta = models.TextField(default='')  # Cambiado a TextField
     price = models.TextField(default='')  # Cambiado a TextField
-    clent_envie_img = models.TextField(default=False)
+    clent_envie_img = models.BooleanField(default=False)
     img_enviada = models.TextField(default='')
 
 class usuario(models.Model):
