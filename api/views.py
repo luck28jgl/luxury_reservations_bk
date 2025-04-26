@@ -242,7 +242,22 @@ class reservacionesViewSet(viewsets.ModelViewSet):
 
 	def list(self, request):
 		data = request.GET
-		tmp = self.get_queryset()
+		tmp = self.get_queryset().filter(usuario_on=True)##filtrar por el campo usuario_on en True
+		if data.get('filt'):
+			tmp = tmp.filter(mensaje__icontains=data['filt'])
+		queryset = self.filter_queryset(tmp)
+		page = self.paginate_queryset(queryset)
+		if page is not None:
+			serializer = self.get_serializer(page, many=True)
+			return self.get_paginated_response(serializer.data)
+		serializer = self.get_serializer(queryset, many=True)
+		return Response(serializer.data)
+
+	##crea una api de enlistado igual a la de lista pero que filtre por el campo usuario_on en False
+	@action(detail=False, methods=['get'], url_path='priv')
+	def list_reservations(self, request):
+		data = request.GET
+		tmp = self.get_queryset().filter(usuario_on=False)
 		if data.get('filt'):
 			tmp = tmp.filter(mensaje__icontains=data['filt'])
 		queryset = self.filter_queryset(tmp)
