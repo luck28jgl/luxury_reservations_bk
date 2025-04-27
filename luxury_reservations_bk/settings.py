@@ -32,10 +32,6 @@ DEFAULT_FROM_EMAIL = 'reserveluxe@gmail.com'  # Opcional, para establecer un rem
 # INSTALLED_APPS += ['storages']
 
 # Configuración de AWS S3
-# AWS_ACCESS_KEY_ID = 'AKIA5VKAMZRPWJKML6LX'
-# AWS_SECRET_ACCESS_KEY = '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'
-# AWS_STORAGE_BUCKET_NAME = 'mi-api-imagenes'
-# AWS_S3_REGION_NAME = 'us-east-2'  # Cambia según tu región
 AWS_ACCESS_KEY_ID = config('AWS_ACCESS_KEY_ID')
 AWS_SECRET_ACCESS_KEY = config('AWS_SECRET_ACCESS_KEY')
 AWS_STORAGE_BUCKET_NAME = config('AWS_STORAGE_BUCKET_NAME')
