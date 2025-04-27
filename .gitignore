@@ -15,7 +15,7 @@ dist/
 !/media/.keep
 !/media/Ficha_de_pago_con_inicio_de_sesion.pdf
 !/media/Ficha_de_pago_fuera_de_luxe.pdf
-.env
+# .env
 # Compiled Java class files
 *.class
 gunicorn_start.bash
