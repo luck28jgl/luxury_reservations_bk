@@ -57,7 +57,8 @@ import os
 from django.conf import settings
 from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
-from rest_framework.parsers import MultiPartParser, FormParser
+from rest_framework.parsers import JSONParser, MultiPartParser, FormParser
+from django.core.files.storage import default_storage
 
 user = authenticate(username='tes66@gmail.com', password='123456')
 print(user)  # Debería devolver el objeto del usuario si las credenciales son correctas
@@ -124,7 +125,19 @@ class reservacionesViewSet(viewsets.ModelViewSet):
 	queryset = reservaciones.objects.all().order_by('-id')
 	serializer_class = ReservacionesSerializer
 	authentication_classes = [SessionAuthentication]
-	parser_classes = [MultiPartParser, FormParser]
+	parser_classes = [JSONParser, MultiPartParser, FormParser]
+
+	@action(detail=False, methods=['post'], url_path='compra-aprobada')
+	def compra_aprobada(self, request):
+		reservacion_id = request.data.get('id')
+		# archivo = request.FILES.get('pago')
+		reservacion = reservaciones.objects.get(id=reservacion_id)
+		if not reservacion:
+			return Response({'error': 'Reservación no encontrada.'}, status=404)
+		reservacion.pagado = True
+		reservacion.save()
+
+		return Response({'message': 'Reservacion completada extitosamente.'})
 
 	@action(detail=False, methods=['post'], url_path='enviar-comprovante')
 	def enviar_comprovante(self, request):
@@ -139,24 +152,50 @@ class reservacionesViewSet(viewsets.ModelViewSet):
 		except reservaciones.DoesNotExist:
 			return Response({'error': 'Reservación no encontrada.'}, status=404)
 
-		# Guardar el archivo en la carpeta media/comprobantes
-		comprobantes_path = os.path.join(settings.MEDIA_ROOT, 'comprobantes')
-		os.makedirs(comprobantes_path, exist_ok=True)
-		file_path = os.path.join(comprobantes_path, archivo.name)
+		# Guardar el archivo en S3
+		file_path = f'comprobantes/{archivo.name}'
+		saved_file = default_storage.save(file_path, archivo)
 
-		with default_storage.open(file_path, 'wb+') as destination:
-			for chunk in archivo.chunks():
-				destination.write(chunk)
+		# Generar la URL pública del archivo en S3
+		file_url = f'https://{settings.AWS_STORAGE_BUCKET_NAME}.s3.{settings.AWS_S3_REGION_NAME}.amazonaws.com/{saved_file}'
 
-		# Guardar la URL del archivo en el modelo
-		reservacion.img_enviada = f'media/comprobantes/{archivo.name}'
-		reservacion.clent_envie_img = True  # Cambiar a True si el cliente envió el comprobante
+		# Guardar la URL completa en el modelo
+		reservacion.img_enviada = file_url
+		reservacion.clent_envie_img = True
 		reservacion.save()
 
-		# Generar la URL completa
-		file_url = request.build_absolute_uri(f'/media/comprobantes/{archivo.name}')
-
 		return Response({'message': 'Archivo subido exitosamente.', 'file_url': file_url})
+	
+	# 	@action(detail=False, methods=['post'], url_path='enviar-comprovante')
+	# def enviar_comprovante(self, request):
+	# 	reservacion_id = request.data.get('id')
+	# 	archivo = request.FILES.get('archivo')
+
+	# 	if not reservacion_id or not archivo:
+	# 		return Response({'error': 'ID y archivo son requeridos.'}, status=400)
+
+	# 	try:
+	# 		reservacion = reservaciones.objects.get(id=reservacion_id)
+	# 	except reservaciones.DoesNotExist:
+	# 		return Response({'error': 'Reservación no encontrada.'}, status=404)
+
+	# 	# Guardar el archivo en S3
+	# 	file_path = f'comprobantes/{archivo.name}'
+	# 	default_storage.save(file_path, archivo)
+
+	# 	# Guardar el archivo en S3
+	# 	file_path = f'comprobantes/{archivo.name}'
+	# 	saved_file = default_storage.save(file_path, archivo)
+
+	# 	# Generar la URL pública del archivo en S3
+	# 	file_url = f'{settings.MEDIA_URL}{saved_file}'
+
+	# 	# Guardar la URL completa en el modelo
+	# 	reservacion.img_enviada = file_url
+	# 	reservacion.clent_envie_img = True
+	# 	reservacion.save()
+
+	# 	return Response({'message': 'Archivo subido exitosamente.', 'file_url': file_url})
 
 	@action(detail=True, methods=['delete'], url_path='delete-reservation')
 	def delete_reservation(self, request, pk=None):
@@ -238,7 +277,8 @@ class reservacionesViewSet(viewsets.ModelViewSet):
 				'uduario': data['uduario'],
 				'email': data['email'],
 				'hotel': data['hotel'],
-				'pdf_url': f"{settings.MEDIA_URL}Ficha_de_pago_con_inicio_de_sesion.pdf",  # URL to the fixed PDF file
+				'pdf_url': "https://mi-api-imagenes.s3.us-east-2.amazonaws.com/media/Ficha_de_pago_con_inicio_de_sesion.pdf",  # quiero que la url que mande aqui sea esta " https://mi-api-imagenes.s3.us-east-2.amazonaws.com/media/Ficha_de_pago_con_inicio_de_sesion.pdf "
+
 			}
 		)
 
@@ -357,7 +397,7 @@ class reservacionesViewSet(viewsets.ModelViewSet):
 				'uduario': data['uduario'],
 				'email': data['email'],
 				'hotel': data['hotel'],
-				'pdf_url': f"{settings.MEDIA_URL}Ficha_de_pago_fuera_de_luxe.pdf",  # URL to the fixed PDF file
+				'pdf_url': "https://mi-api-imagenes.s3.us-east-2.amazonaws.com/media/Ficha_de_pago_fuera_de_luxe.pdf",  # URL to the fixed PDF file
 			}
 		)
 
