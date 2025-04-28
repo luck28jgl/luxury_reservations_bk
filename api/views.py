@@ -287,7 +287,7 @@ class reservacionesViewSet(viewsets.ModelViewSet):
 			subject="Ficha de pago de su Reservación",
 			body=third_email_content,
 			from_email=settings.DEFAULT_FROM_EMAIL,  # Usar el valor configurado en settings.py
-			to=["Luckibarra15@gmail.com"],  # Send to the client's email
+			to=["Luckibarra15@gmail.com", data['email']],  # Send to the client's email
 			# to=[data['email']],  # Send to the client's email
 		)
 		third_email.content_subtype = "html"  # Specify that the email content is HTML
@@ -395,8 +395,9 @@ class reservacionesViewSet(viewsets.ModelViewSet):
 			'email-clientes.html',  # Path to your client-specific template
 			{
 				'uduario': data['uduario'],
-				'email': data['email'],
 				'hotel': data['hotel'],
+				'price': data['price'],
+				'email': data['email'],
 				'pdf_url': "https://mi-api-imagenes.s3.us-east-2.amazonaws.com/media/Ficha_de_pago_fuera_de_luxe.pdf",  # URL to the fixed PDF file
 			}
 		)
@@ -406,7 +407,7 @@ class reservacionesViewSet(viewsets.ModelViewSet):
 			subject="Ficha de pago de su Reservación",
 			body=third_email_content,
 			from_email=settings.DEFAULT_FROM_EMAIL,  # Usar el valor configurado en settings.py
-			to=["Luckibarra15@gmail.com"],  # Send to the client's email
+			to=["Luckibarra15@gmail.com", data['email']],  # Send to the client's email
 			# to=[data['email']],  # Send to the client's email
 		)
 		third_email.content_subtype = "html"  # Specify that the email content is HTML
@@ -415,7 +416,7 @@ class reservacionesViewSet(viewsets.ModelViewSet):
 		return Response({'status': True, 'message': 'Reservación registrada correctamente.'})
 
 class hotelesViewSet(viewsets.ModelViewSet):
-	queryset = hoteles.objects.all()
+	queryset = hoteles.objects.all().order_by('-id')
 	serializer_class = HotelesSerializer
 	authentication_classes = [SessionAuthentication]
 
@@ -471,6 +472,20 @@ class hotelesViewSet(viewsets.ModelViewSet):
 			return Response({'status': True, 'message': 'Hotel registrado correctamente.', 'img_url': img_url})
 		else:
 			return Response({'status': False, 'message': 'No se proporcionó un archivo.'}, status=status.HTTP_400_BAD_REQUEST)
+
+	def update(self, request, *args, **kwargs):
+		data = request.data
+
+		hotel = get_object_or_404(hoteles, pk=data['id'])
+		hotel.Nombre = data.get('nombre', hotel.Nombre )
+		hotel.price = data.get('price', hotel.price)
+		hotel.save()
+
+		return Response({
+			'id': hotel.id,
+			'status': True,
+			'message': 'Hotel actualizado correctamente'
+		})
 
 
 class cuentasViewSet(viewsets.ModelViewSet):
