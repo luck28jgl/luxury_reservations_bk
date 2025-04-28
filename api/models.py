@@ -16,22 +16,22 @@ class hoteles(models.Model):
     img = models.TextField(default='') #
 
 class reservaciones(models.Model):
-    email = models.TextField(default='') # Habitantes por hectárea
-    uduario = models.TextField(default='') # Cuartos por hectárea
+    email = models.TextField(default='', null=True, blank=True) # Habitantes por hectárea
+    uduario = models.TextField(default='', null=True, blank=True) # Cuartos por hectárea
     usuario_relation = models.ForeignKey('usuario', on_delete=models.CASCADE, related_name='reservaciones', null=True, blank=True)
-    hotel = models.TextField(default='') # Viviendas por hectareas
-    plan = models.TextField(default='') # superficie minima del terreno
-    tip_hab = models.TextField(default='') # superficie minima del terreno
-    tip_vista = models.TextField(default='') # superficie minima del terreno
-    cuentas_pesonas = models.TextField(default='') # superficie minima del terreno
-    usuario_on = models.BooleanField(default=True) # superficie minima del terreno
-    pagado = models.BooleanField(default=False) # superficie minima del terreno
+    hotel = models.TextField(default='', null=True, blank=True) # Viviendas por hectareas
+    plan = models.TextField(default='', null=True, blank=True) # superficie minima del terreno
+    tip_hab = models.TextField(default='', null=True, blank=True) # superficie minima del terreno
+    tip_vista = models.TextField(default='', null=True, blank=True) # superficie minima del terreno
+    cuentas_pesonas = models.TextField(default='', null=True, blank=True) # superficie minima del terreno
+    usuario_on = models.BooleanField(default=False) # superficie minima del terreno
+    pagado = models.BooleanField(default=False, null=True, blank=True) # superficie minima del terreno
     fecha_de_creacion = models.DateTimeField(auto_now=True)
-    desde = models.TextField(default='')  # Cambiado a TextField
-    hasta = models.TextField(default='')  # Cambiado a TextField
-    price = models.TextField(default='')  # Cambiado a TextField
-    clent_envie_img = models.BooleanField(default=False)
-    img_enviada = models.TextField(default='')
+    desde = models.TextField(default='', null=True, blank=True)  # Cambiado a TextField
+    hasta = models.TextField(default='', null=True, blank=True)  # Cambiado a TextField
+    price = models.TextField(default='', null=True, blank=True)  # Cambiado a TextField
+    clent_envie_img = models.BooleanField(default=False, null=True, blank=True)
+    img_enviada = models.TextField(default='', null=True, blank=True)
 
 class usuario(models.Model):
 
