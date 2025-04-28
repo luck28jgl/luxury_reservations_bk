@@ -424,12 +424,12 @@ class hotelesViewSet(viewsets.ModelViewSet):
 	@action(detail=True, methods=['delete'], url_path='delete-reservation')
 	def delete_reservation(self, request, pk=None):
 		try:
-			# Obtener la reservación por ID
-			reservation = self.get_object()
-			reservation.delete()
-			return Response({'status': True, 'message': 'Reservación eliminada correctamente.'}, status=status.HTTP_200_OK)
-		except reservaciones.DoesNotExist:
-			return Response({'status': False, 'message': 'Reservación no encontrada.'}, status=status.HTTP_404_NOT_FOUND)
+			# Obtener la hoteles por ID
+			hotel = self.get_object()
+			hotel.delete()
+			return Response({'status': True, 'message': 'Hotel eliminado correctamente.'}, status=status.HTTP_200_OK)
+		except hoteles.DoesNotExist:
+			return Response({'status': False, 'message': 'Hotel no encontrado.'}, status=status.HTTP_404_NOT_FOUND)
 
 	def list(self, request):
 		data = request.GET
@@ -449,28 +449,22 @@ class hotelesViewSet(viewsets.ModelViewSet):
 		archivo = request.FILES.get('archivo')  # Obtener el archivo enviado
 
 		if archivo:
-			# Crear la carpeta media/hoteles si no existe
-			media_path = os.path.join(settings.MEDIA_ROOT, 'hoteles')
-			if not os.path.exists(media_path):
-				os.makedirs(media_path)
+			# Guardar el archivo en la carpeta 'media/hoteles' usando default_storage
+			file_path = f'media/hoteles/{archivo.name}'
+			saved_file = default_storage.save(file_path, archivo)
 
-			# Guardar el archivo en la carpeta media/hoteles
-			file_path = os.path.join('hoteles', archivo.name)
-			full_path = os.path.join(settings.MEDIA_ROOT, file_path)
-			default_storage.save(full_path, ContentFile(archivo.read()))
-
-			# Obtener la URL completa del archivo
-			img_url = f"{settings.MEDIA_URL}{file_path}".replace('\\', '/')
+			# Generar la ruta relativa del archivo
+			relative_url = f"/{saved_file}"  # Asegurar que comience con "/"
 
 			# Crear el objeto del modelo hoteles
 			enf = hoteles.objects.create(
 				Nombre=data['nombre'],
 				price=data['price'],
-				img=img_url,  # Guardar la URL en el campo img
+				img=relative_url,  # Guardar la ruta relativa en el campo img
 			)
 			enf.save()
 
-			return Response({'status': True, 'message': 'Hotel registrado correctamente.', 'img_url': img_url})
+			return Response({'status': True, 'message': 'Hotel registrado correctamente.', 'img_url': relative_url})
 		else:
 			return Response({'status': False, 'message': 'No se proporcionó un archivo.'}, status=status.HTTP_400_BAD_REQUEST)
 
