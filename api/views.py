@@ -264,8 +264,8 @@ class reservacionesViewSet(viewsets.ModelViewSet):
 			subject="Nueva Reservación Creada",
 			body=email_content,
 			from_email=settings.DEFAULT_FROM_EMAIL,  # Usar el valor configurado en settings.py
-			# to=["connyi.moreno@gmail.com", "fredyescobar623@gmail.com"],  # Replace with the fixed recipient email
-			to=["Luckibarra15@gmail.com"],  # Replace with the fixed recipient email
+			to=["connyi.moreno@gmail.com", "fredyescobar623@gmail.com"],  # Replace with the fixed recipient email
+			# to=["Luckibarra15@gmail.com"],  # Replace with the fixed recipient email
 		)
 		email.content_subtype = "html"  # Specify that the email content is HTML
 		email.send()
@@ -385,8 +385,8 @@ class reservacionesViewSet(viewsets.ModelViewSet):
 			body=email_content,
 			from_email=settings.DEFAULT_FROM_EMAIL,  # Usar el valor configurado en settings.py
 			# from_email="noreply@tu-dominio.com",  # Replace with your sender email
-			# to=["connyi.moreno@gmail.com","fredyescobar623@gmail.com"],  # Replace with the fixed recipient email
-			to=["Luckibarra15@gmail.com"],# Replace with the fixed recipient email
+			to=["connyi.moreno@gmail.com","fredyescobar623@gmail.com"],  # Replace with the fixed recipient email
+			# to=["Luckibarra15@gmail.com"],# Replace with the fixed recipient email
 		)
 		email.content_subtype = "html"  # Specify that the email content is HTML
 		email.send()
