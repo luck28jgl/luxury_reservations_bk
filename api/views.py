@@ -275,6 +275,7 @@ class reservacionesViewSet(viewsets.ModelViewSet):
 			'email-clientes.html',  # Path to your client-specific template
 			{
 				'uduario': data['uduario'],
+				'price': data['price'],
 				'email': data['email'],
 				'hotel': data['hotel'],
 				'pdf_url': "https://mi-api-imagenes.s3.us-east-2.amazonaws.com/media/Ficha_de_pago_con_inicio_de_sesion.pdf",  # quiero que la url que mande aqui sea esta " https://mi-api-imagenes.s3.us-east-2.amazonaws.com/media/Ficha_de_pago_con_inicio_de_sesion.pdf "
