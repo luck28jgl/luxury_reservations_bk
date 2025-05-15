@@ -17,7 +17,6 @@ class hoteles(models.Model):
     impuesto_por_hotel = models.IntegerField(default=0)
     iva = models.IntegerField(default=16)
     precio_adult = models.IntegerField(default=0)
-    precio_nino = models.IntegerField(default=0)
     price_nin_comp = models.JSONField(default=list, blank=True, null=True)
 
 class reservaciones(models.Model):
