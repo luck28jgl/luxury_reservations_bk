@@ -18,7 +18,7 @@ class hoteles(models.Model):
     iva = models.IntegerField(default=16)
     precio_adult = models.IntegerField(default=0)
     precio_nino = models.IntegerField(default=0)
-    lista_ejemplo = models.JSONField(default=list, blank=True, null=True)
+    price_nin_comp = models.JSONField(default=list, blank=True, null=True)
 
 class reservaciones(models.Model):
     email = models.TextField(default='', null=True, blank=True) # Habitantes por hectárea
