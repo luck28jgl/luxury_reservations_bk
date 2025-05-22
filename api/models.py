@@ -37,7 +37,8 @@ class reservaciones(models.Model):
     clent_envie_img = models.BooleanField(default=False, null=True, blank=True)
     img_enviada = models.TextField(default='', null=True, blank=True)
     tip_peson = models.TextField(default='[]', blank=True, null=True)
-    # person_reservation = models.TextField(default='', null=True, blank=True)
+    precio_adult = models.IntegerField(default=0)
+    precio_nino = models.IntegerField(default=0)
 
 class usuario(models.Model):
 

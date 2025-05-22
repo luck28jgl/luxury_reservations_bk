@@ -360,6 +360,7 @@ class reservacionesViewSet(viewsets.ModelViewSet):
 			plan=str(data['plan']),
 			tip_hab=str(data['tip_hab']),
 			tip_vista=str(data['tip_vista']),
+			tip_peson=str(data['tip_peson']),
 		)
 		enf.save()
 		# Render the email template with the reservation data
@@ -386,8 +387,8 @@ class reservacionesViewSet(viewsets.ModelViewSet):
 			body=email_content,
 			from_email=settings.DEFAULT_FROM_EMAIL,  # Usar el valor configurado en settings.py
 			# from_email="noreply@tu-dominio.com",  # Replace with your sender email
-			to=["connyi.moreno@gmail.com","fredyescobar623@gmail.com"],  # Replace with the fixed recipient email
-			# to=["Luckibarra15@gmail.com"],# Replace with the fixed recipient email
+			# to=["connyi.moreno@gmail.com","fredyescobar623@gmail.com"],  # Replace with the fixed recipient email
+			to=["Luckibarra15@gmail.com"],# Replace with the fixed recipient email
 		)
 		email.content_subtype = "html"  # Specify that the email content is HTML
 		email.send()
