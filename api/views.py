@@ -59,6 +59,7 @@ from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
 from rest_framework.parsers import JSONParser, MultiPartParser, FormParser
 from django.core.files.storage import default_storage
+import json
 
 user = authenticate(username='tes66@gmail.com', password='123456')
 print(user)  # Debería devolver el objeto del usuario si las credenciales son correctas
@@ -435,7 +436,7 @@ class hotelesViewSet(viewsets.ModelViewSet):
 		data = request.GET
 		tmp = self.get_queryset()
 		if data.get('filt'):
-			tmp = tmp.filter(mensaje__icontains=data['filt'])
+			tmp = tmp.filter(Nombre__icontains=data['filt'])
 		queryset = self.filter_queryset(tmp)
 		page = self.paginate_queryset(queryset)
 		if page is not None:
@@ -474,7 +475,17 @@ class hotelesViewSet(viewsets.ModelViewSet):
 		hotel = get_object_or_404(hoteles, pk=data['id'])
 		hotel.Nombre = data.get('nombre', hotel.Nombre )
 		hotel.price = data.get('price', hotel.price)
-		hotel.save()
+		hotel.iva = data.get('iva', hotel.iva)## esta va a hacer campo numero 1
+		hotel.impuesto_por_hotel = data.get('impuesto_por_hotel', hotel.impuesto_por_hotel)## esta va a hacer campo numero 1
+		hotel.precio_adult = data.get('precio_adult', hotel.precio_adult)## esta va a hacer campo numero 1
+		# Manejar el campo `price_nin_comp` como string en formato '[]'
+		if 'price_nin_comp' in data:
+			# Asegurarse de que el valor sea una cadena en formato JSON
+			if isinstance(data['price_nin_comp'], list):
+				hotel.price_nin_comp = json.dumps(data['price_nin_comp'])
+			else:
+				hotel.price_nin_comp = data['price_nin_comp']
+			hotel.save()
 
 		return Response({
 			'id': hotel.id,

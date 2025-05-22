@@ -17,7 +17,7 @@ class hoteles(models.Model):
     impuesto_por_hotel = models.IntegerField(default=0)
     iva = models.IntegerField(default=16)
     precio_adult = models.IntegerField(default=0)
-    price_nin_comp = models.JSONField(default=list, blank=True, null=True)
+    price_nin_comp = models.TextField(default='[]', blank=True, null=True)
 
 class reservaciones(models.Model):
     email = models.TextField(default='', null=True, blank=True) # Habitantes por hectárea
@@ -36,6 +36,8 @@ class reservaciones(models.Model):
     price = models.TextField(default='', null=True, blank=True)  # Cambiado a TextField
     clent_envie_img = models.BooleanField(default=False, null=True, blank=True)
     img_enviada = models.TextField(default='', null=True, blank=True)
+    tip_peson = models.TextField(default='[]', blank=True, null=True)
+    # person_reservation = models.TextField(default='', null=True, blank=True)
 
 class usuario(models.Model):
 
