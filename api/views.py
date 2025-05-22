@@ -61,8 +61,21 @@ from rest_framework.parsers import JSONParser, MultiPartParser, FormParser
 from django.core.files.storage import default_storage
 import json
 
-user = authenticate(username='tes66@gmail.com', password='123456')
-print(user)  # Debería devolver el objeto del usuario si las credenciales son correctas
+email = EmailMessage(
+    subject="Prueba de correo",
+    body="Este es un correo de prueba.",
+    from_email="reserveluxe@gmail.com",
+    to=["Luckibarra15@gmail.com"],
+)
+email.content_subtype = "html"  # Especificar que el contenido es HTML
+try:
+    email.send()
+    print("Correo enviado correctamente")
+except Exception as e:
+    print(f"Error al enviar el correo: {e}")
+
+# user = authenticate(username='tes66@gmail.com', password='123456')
+# print(user)  # Debería devolver el objeto del usuario si las credenciales son correctas
 
 # print(settings.TEMPLATES[0]['DIRS']) 
 class CustomTokenCreateView(APIView):
@@ -360,7 +373,9 @@ class reservacionesViewSet(viewsets.ModelViewSet):
 			plan=str(data['plan']),
 			tip_hab=str(data['tip_hab']),
 			tip_vista=str(data['tip_vista']),
-			tip_peson=str(data['tip_peson']),
+			precio_adult=data['precio_adult'],
+			precio_nino=data['precio_nino'],
+			tip_peson=data.get('tip_peson', '[]'),
 		)
 		enf.save()
 		# Render the email template with the reservation data
@@ -377,6 +392,8 @@ class reservacionesViewSet(viewsets.ModelViewSet):
 				'desde': data['desde'],
 				'hasta': data['hasta'],
 				'cuentas_pesonas': data['cuentas_pesonas'],
+				'precio_adult': data['precio_adult'],
+				'precio_nino': data['precio_nino'],
 				'fecha_de_creacion': datetime.now().strftime('%d/%m/%Y'),
 			}
 		)

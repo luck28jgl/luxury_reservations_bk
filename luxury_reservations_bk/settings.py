@@ -25,7 +25,7 @@ EMAIL_HOST = 'smtp.gmail.com'  # Cambia esto si usas otro proveedor
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'reserveluxe@gmail.com'  # Reemplaza con tu correo
-EMAIL_HOST_PASSWORD = 'wmir kiig kigh gyul'  # Reemplaza con tu contraseña o token de aplicación
+EMAIL_HOST_PASSWORD = 'uixs qfdb gcav aymn'  # Reemplaza con tu contraseña o token de aplicación
 DEFAULT_FROM_EMAIL = 'reserveluxe@gmail.com'  # Opcional, para establecer un remitente predeterminado
 
 # filepath: c:\Users\JGL\Documents\repos_practica\luxe\luxury_reservations_bk\settings.py
