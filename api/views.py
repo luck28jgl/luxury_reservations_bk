@@ -60,20 +60,17 @@ from django.core.files.base import ContentFile
 from rest_framework.parsers import JSONParser, MultiPartParser, FormParser
 from django.core.files.storage import default_storage
 import json
+import smtplib
 
-email = EmailMessage(
-    subject="Prueba de correo",
-    body="Este es un correo de prueba.",
-    from_email="reserveluxe@gmail.com",
-    to=["Luckibarra15@gmail.com"],
-)
-email.content_subtype = "html"  # Especificar que el contenido es HTML
-try:
-    email.send()
-    print("Correo enviado correctamente")
-except Exception as e:
-    print(f"Error al enviar el correo: {e}")
-
+# try:
+#     server = smtplib.SMTP('smtp.gmail.com', 587)
+#     server.starttls()
+#     server.login('reserveluxe@gmail.com', 'uixs qfdb gcav aymn')  # Reemplaza con tu correo y contraseña de aplicación
+#     print("Conexión exitosa")
+#     server.quit()
+# except Exception as e:
+#     print(f"Error: {e}")
+	
 # user = authenticate(username='tes66@gmail.com', password='123456')
 # print(user)  # Debería devolver el objeto del usuario si las credenciales son correctas
 
@@ -94,7 +91,7 @@ class CustomTokenCreateView(APIView):
 			if not usru.tipo in [0, 1]:
 				return Response({'error': 'Invalid credentials'}, status=status.HTTP_400_BAD_REQUEST)
 			token, created = Token.objects.get_or_create(user=usr)
-			login(request, user)
+			login(request, user=usr)
 			return Response({'auth_token': token.key, 'status': True})
 		else:
 			return Response({'error': 'Invalid credentials'}, status=status.HTTP_400_BAD_REQUEST)
@@ -251,6 +248,9 @@ class reservacionesViewSet(viewsets.ModelViewSet):
 			fecha_de_creacion=datetime.now().strftime('%d/%m/%Y'),
 			desde=data['desde'],
 			hasta=data['hasta'],
+			precio_adult=data['precio_adult'],
+			precio_nino=data['precio_nino'],
+			tip_peson=data.get('tip_peson', '[]'),
 		)
 		reservacion.save()
 
@@ -269,6 +269,8 @@ class reservacionesViewSet(viewsets.ModelViewSet):
 				'desde': data['desde'],
 				'hasta': data['hasta'],
 				'cuentas_pesonas': data['cuentas_pesonas'],
+				'precio_adult': data['precio_adult'],
+				'precio_nino': data['precio_nino'],
 				'fecha_de_creacion': datetime.now().strftime('%d/%m/%Y'),
 			}
 		)
@@ -278,8 +280,8 @@ class reservacionesViewSet(viewsets.ModelViewSet):
 			subject="Nueva Reservación Creada",
 			body=email_content,
 			from_email=settings.DEFAULT_FROM_EMAIL,  # Usar el valor configurado en settings.py
-			to=["connyi.moreno@gmail.com", "fredyescobar623@gmail.com"],  # Replace with the fixed recipient email
-			# to=["Luckibarra15@gmail.com"],  # Replace with the fixed recipient email
+			# to=["connyi.moreno@gmail.com", "fredyescobar623@gmail.com"],  # Replace with the fixed recipient email
+			to=["Luckibarra15@gmail.com"],  # Replace with the fixed recipient email
 		)
 		email.content_subtype = "html"  # Specify that the email content is HTML
 		email.send()
@@ -302,7 +304,7 @@ class reservacionesViewSet(viewsets.ModelViewSet):
 			subject="Ficha de pago de su Reservación",
 			body=third_email_content,
 			from_email=settings.DEFAULT_FROM_EMAIL,  # Usar el valor configurado en settings.py
-			to=["Luckibarra15@gmail.com", data['email']],  # Send to the client's email
+			to=["Luckibarra15@gmail.com"],  # Send to the client's email
 			# to=[data['email']],  # Send to the client's email
 		)
 		third_email.content_subtype = "html"  # Specify that the email content is HTML
@@ -397,19 +399,20 @@ class reservacionesViewSet(viewsets.ModelViewSet):
 				'fecha_de_creacion': datetime.now().strftime('%d/%m/%Y'),
 			}
 		)
+		# Send the first email
+		try:
+			email = EmailMessage(
+				subject="Nueva Reservación Creada",
+				body=email_content,
+				from_email=settings.DEFAULT_FROM_EMAIL,  # Usar el valor configurado en settings.py
+				to=["Luckibarra15@gmail.com"],  # Replace with the fixed recipient email
+			)
+			email.content_subtype = "html"  # Specify that the email content is HTML
+			email.send()
+			print("Primer correo enviado correctamente")
+		except Exception as e:
+			print(f"Error al enviar el primer correo: {e}")
 
-		# Send the email
-		email = EmailMessage(
-			subject="Nueva Reservación Creada",
-			body=email_content,
-			from_email=settings.DEFAULT_FROM_EMAIL,  # Usar el valor configurado en settings.py
-			# from_email="noreply@tu-dominio.com",  # Replace with your sender email
-			# to=["connyi.moreno@gmail.com","fredyescobar623@gmail.com"],  # Replace with the fixed recipient email
-			to=["Luckibarra15@gmail.com"],# Replace with the fixed recipient email
-		)
-		email.content_subtype = "html"  # Specify that the email content is HTML
-		email.send()
-		
 		# Render the third email template with the hotel and download button
 		third_email_content = render_to_string(
 			'email-clientes.html',  # Path to your client-specific template
@@ -421,17 +424,19 @@ class reservacionesViewSet(viewsets.ModelViewSet):
 				'pdf_url': "https://mi-api-imagenes.s3.us-east-2.amazonaws.com/media/Ficha_de_pago_fuera_de_luxe.pdf",  # URL to the fixed PDF file
 			}
 		)
-
 		# Send the third email
-		third_email = EmailMessage(
-			subject="Ficha de pago de su Reservación",
-			body=third_email_content,
-			from_email=settings.DEFAULT_FROM_EMAIL,  # Usar el valor configurado en settings.py
-			to=["Luckibarra15@gmail.com", data['email']],  # Send to the client's email
-			# to=[data['email']],  # Send to the client's email
-		)
-		third_email.content_subtype = "html"  # Specify that the email content is HTML
-		third_email.send()
+		try:
+			third_email = EmailMessage(
+				subject="Ficha de pago de su Reservación",
+				body=third_email_content,
+				from_email=settings.DEFAULT_FROM_EMAIL,  # Usar el valor configurado en settings.py
+				to=["Luckibarra15@gmail.com", data['email']],  # Send to the client's email
+			)
+			third_email.content_subtype = "html"  # Specify that the email content is HTML
+			third_email.send()
+			print("Tercer correo enviado correctamente")
+		except Exception as e:
+			print(f"Error al enviar el tercer correo: {e}")
 
 		return Response({'status': True, 'message': 'Reservación registrada correctamente.'})
 
@@ -474,12 +479,21 @@ class hotelesViewSet(viewsets.ModelViewSet):
 
 			# Generar la ruta relativa del archivo
 			relative_url = f"/{saved_file}"  # Asegurar que comience con "/"
+			
+			price_nin_comp = data.get('price_nin_comp', '[]')
+			if not isinstance(price_nin_comp, str):
+				price_nin_comp = '[]'
+
+			precio_adult = str(data.get('precio_adult', '0'))
 
 			# Crear el objeto del modelo hoteles
 			enf = hoteles.objects.create(
 				Nombre=data['nombre'],
 				price=data['price'],
 				img=relative_url,  # Guardar la ruta relativa en el campo img
+				precio_adult=precio_adult,
+				impuesto_por_hotel=data['impuesto_por_hotel'],
+				price_nin_comp=price_nin_comp,  # Manejar el campo price_nin_comp como string en formato '[]'
 			)
 			enf.save()
 

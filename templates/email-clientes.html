@@ -134,7 +134,9 @@
         .w400 {
           font-weight: 400;
         }
-
+        .im {
+            color: #ffffff!important;
+        }
     </style>
     <title>Ficha  de pago de su Reservación</title>
 
@@ -159,10 +161,10 @@
                             style="background-color: #024a71; padding: 20px; border-radius: 4px 4px 0px 0px; color: #ffffff; font-size: 16px; font-weight: 400; letter-spacing: 1px; line-height: 24px; font-family: 'Lato', Helvetica, Arial, sans-serif;">
                             <h1 style="margin-top: 20px; margin-bottom: 20px; font-family: 'Lato', Helvetica, Arial, sans-serif; font-size: 18px; font-weight: 400; text-align: center; color: #ffffff;">
                                 <h2 style="font-size: 20px; font-weight: 600; margin-bottom: 10px;">Detalles de la Reservación</h2>
-                                <p style="margin: 5px 0;"><strong>Gracias por su reservación:</strong> {{ uduario }}</p>
-                                <p style="margin: 5px 0;"><strong>En el Hotel:</strong> {{ hotel }}</p>
-                                <p style="margin: 5px 0;"><strong>el precio de su reservasion :</strong> $ {{ price }} Mx</p>
-                                <p style="margin: 5px 0;"><strong>Puede descargar la informacion del pago  haciendo click en el botón :</strong> </p>
+                                <p style="margin: 5px 0; color: #ffffff;"><strong>Gracias por su reservación:</strong> {{ uduario }}</p>
+                                <p style="margin: 5px 0; color: #ffffff;"><strong>En el Hotel:</strong> {{ hotel }}</p>
+                                <p style="margin: 5px 0; color: #ffffff;"><strong>el precio de su reservasion :</strong> $ {{ price }} Mx</p>
+                                <p style="margin: 5px 0; color: #ffffff;"><strong>Puede descargar la informacion del pago  haciendo click en el botón :</strong> </p>
                                 <a href="{{ pdf_url }}" style="display: inline-block; padding: 10px 20px; background-color: #40c351; color: white; text-decoration: none; border-radius: 5px;">Descargar datos de pago</a>
                                 <p style="margin: 5px 0;"><strong>Enviar comprobante a los siguiente contacto :</strong> </p>
                                 <a href="https://api.whatsapp.com/send?phone=5517247751&text=Hola,%20este%20es%20mi%20comprobante%20para%20la%20reservacion%20a%20nombre%20de:%20{{uduario}}%20con%20correo:%20{{email}}"  target="_blank" rel="noopener noreferrer">
@@ -179,7 +181,7 @@
                     </tr>
                     <tr>
                         <td bgcolor="#ffffff" align="center" valign="top"
-                            style="padding: 40px 20px 20px 20px; border-radius: 4px 4px 0px 0px; color: #111111; font-size: 25px; font-weight: 400; letter-spacing: 1px; line-height: 20px; font-family:&apos;Lato&apos;, Helvetica, Arial, sans-serif;">
+                            style="padding: 40px 20px 20px 20px; border-radius: 4px 4px 0px 0px; font-size: 25px; font-weight: 400; letter-spacing: 1px; line-height: 20px; font-family:&apos;Lato&apos;, Helvetica, Arial, sans-serif;">
                         </td>
                     </tr>
                 </table>
