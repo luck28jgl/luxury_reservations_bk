@@ -280,8 +280,8 @@ class reservacionesViewSet(viewsets.ModelViewSet):
 			subject="Nueva Reservación Creada",
 			body=email_content,
 			from_email=settings.DEFAULT_FROM_EMAIL,  # Usar el valor configurado en settings.py
-			# to=["connyi.moreno@gmail.com", "fredyescobar623@gmail.com"],  # Replace with the fixed recipient email
-			to=["Luckibarra15@gmail.com"],  # Replace with the fixed recipient email
+			to=["connyi.moreno@gmail.com", "fredyescobar623@gmail.com"],  # Replace with the fixed recipient email
+			# to=["Luckibarra15@gmail.com"],  # Replace with the fixed recipient email
 		)
 		email.content_subtype = "html"  # Specify that the email content is HTML
 		email.send()
@@ -304,8 +304,8 @@ class reservacionesViewSet(viewsets.ModelViewSet):
 			subject="Ficha de pago de su Reservación",
 			body=third_email_content,
 			from_email=settings.DEFAULT_FROM_EMAIL,  # Usar el valor configurado en settings.py
-			to=["Luckibarra15@gmail.com"],  # Send to the client's email
-			# to=[data['email']],  # Send to the client's email
+			# to=["Luckibarra15@gmail.com"],  # Send to the client's email
+			to=[data['email']],  # Send to the client's email
 		)
 		third_email.content_subtype = "html"  # Specify that the email content is HTML
 		third_email.send()
@@ -405,7 +405,8 @@ class reservacionesViewSet(viewsets.ModelViewSet):
 				subject="Nueva Reservación Creada",
 				body=email_content,
 				from_email=settings.DEFAULT_FROM_EMAIL,  # Usar el valor configurado en settings.py
-				to=["Luckibarra15@gmail.com"],  # Replace with the fixed recipient email
+				to=["connyi.moreno@gmail.com", "fredyescobar623@gmail.com"],  # Replace with the fixed recipient email
+				# to=["Luckibarra15@gmail.com", data['email']],  # Replace with the fixed recipient email
 			)
 			email.content_subtype = "html"  # Specify that the email content is HTML
 			email.send()
@@ -430,7 +431,7 @@ class reservacionesViewSet(viewsets.ModelViewSet):
 				subject="Ficha de pago de su Reservación",
 				body=third_email_content,
 				from_email=settings.DEFAULT_FROM_EMAIL,  # Usar el valor configurado en settings.py
-				to=["Luckibarra15@gmail.com", data['email']],  # Send to the client's email
+				to=[data['email']],  # Send to the client's email
 			)
 			third_email.content_subtype = "html"  # Specify that the email content is HTML
 			third_email.send()
